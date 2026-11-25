@@ -1,14 +1,14 @@
 // One night of service from the first ticket to closing time: builds the kitchen from the night's map,
 // applies the stall's upgrades and runs the clock, orders and stations every frame.
-import { NIGHTS, starsFor } from '../nights/campaign.js';
+import { scheduleEvents, tickEvents } from './events.js';
+import { tickOrders } from './orders.js';
+import { DIFFICULTIES, ENDLESS, ENDLESS_STRIKES } from './difficulty.js';
+import { stallModifiers } from '../stall/upgrades.js';
 import { buildKitchen } from '../kitchen/grid.js';
 import { makeChef } from '../kitchen/chef.js';
 import { tickStations } from '../kitchen/stations.js';
-import { tickOrders } from './orders.js';
-import { stallModifiers } from '../stall/upgrades.js';
 import { seededRandom } from '../core/screen.js';
-import { DIFFICULTIES, ENDLESS, ENDLESS_STRIKES } from './difficulty.js';
-import { scheduleEvents, tickEvents } from './events.js';
+import { NIGHTS, starsFor } from '../nights/campaign.js';
 
 export function createRun(index, save, fx, seed = 7 + (index === 'endless' ? 999 : index) * 101) {
   const night = index === 'endless' ? ENDLESS : NIGHTS[index];

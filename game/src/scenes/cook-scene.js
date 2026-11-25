@@ -1,8 +1,9 @@
 // A night of service on screen: reads the keyboard and mouse, walks the cook, uses stations,
 // and paints the whole kitchen, rail, street and HUD every frame.
+import { planFor, drawRoutePlan, drawRouteBanner } from '../kitchen/route-plan.js';
+import { createRun, updateRun, secondsLeft } from '../service/night-run.js';
 import { moveChef, targetStation, planRoute, faceStation, chefTile } from '../kitchen/chef.js';
 import { interact } from '../kitchen/stations.js';
-import { createRun, updateRun, secondsLeft } from '../service/night-run.js';
 import { EVENTS } from '../service/events.js';
 import { stationAt } from '../kitchen/grid.js';
 import { W, H, KITCHEN, tileCenter } from '../core/screen.js';
@@ -11,7 +12,6 @@ import { drawChef } from '../art/people-art.js';
 import { drawFood, drawPlate } from '../art/food-art.js';
 import { drawStreet } from '../art/street-art.js';
 import { drawTicketRail, ticketRect } from '../ui/ticket-rail.js';
-import { planFor, drawRoutePlan, drawRouteBanner } from '../kitchen/route-plan.js';
 import { REGULARS } from '../service/customers.js';
 import { inside } from '../ui/widgets.js';
 import { drawTopBar, drawBottomBar, drawBanner } from '../ui/hud.js';
