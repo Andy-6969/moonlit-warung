@@ -74,7 +74,7 @@ function stageService(app, plannedGuest = 'sari') {
 }
 
 /** Night 2 in the rain: a smaller crowd, the cook pounding peanut sauce, a gado-gado half built. */
-function stageRain(app) {
+function stageRain(app, shotOpts = {}) {
   app.save.upgrades = ['knife'];
   const scene = createCookScene(app, 1, { skipIntro: true, seed: 3 });
   const run = scene.run;
@@ -91,6 +91,12 @@ function stageRain(app) {
   put(run, 7, 3, { item: { id: 'plate', parts: ['fried_rice', 'fried_egg'] } });
   run.chef.x = 1.5; run.chef.y = 5.5; run.chef.dir = { x: -1, y: 0 }; run.chef.busy = 0.1;
   run.takings = 238; run.combo = 2; run.lastServe = run.time - 4;
+  if (shotOpts.rainEvent) {   // the night's gusty wind has just blown in over the market
+    run.time = run.eventQueue[0].at * run.night.seconds + 5;
+    run.eventQueue = [];
+    startEvent(run, 'gusty_wind');
+    run.event.left = 13;
+  }
   run.fx.emit('grind', { at: stationAt(run.k, 0, 5) });
   tickFeel(scene.feel, 0.1);
   scene.feel.shake = 0; scene.feel.flash = 0;
@@ -133,6 +139,7 @@ export function stageShot(app, name, ctx) {
   let staged;
   if (name === 'cook') staged = stageService(app);
   else if (name === 'rain') staged = stageRain(app);
+  else if (name === 'wind') staged = stageRain(app, { rainEvent: true });
   else if (name === 'flicker') staged = stageFlicker(app);
   else if (name === 'map') { Object.assign(app.save, SAVE_MIDWAY); staged = { scene: createMapScene(app), t: 3.1 }; }
   else if (name === 'shop') { Object.assign(app.save, SAVE_MIDWAY); staged = { scene: createShopScene(app), t: 2 }; }

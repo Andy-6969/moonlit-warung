@@ -14,15 +14,15 @@ export const EVENTS = {
     apply(m) { m.grill *= 1.5; m.burnDelay *= 0.6; },
   },
   tour_bus: {
-    name: 'TOUR BUS', text: 'Three guests sit down at once: tips x1.5', secs: 18, color: '#ffcf5a', burst: 3,
+    name: 'TOUR BUS', text: 'Three guests at once, tips x1.5', secs: 18, color: '#ffcf5a', burst: 3,
     apply(m) { m.tip *= 1.5; },
   },
   street_band: {
-    name: 'STREET BAND', text: 'Guests sway along: patience drains 40% slower', secs: 22, color: '#7fe07a',
+    name: 'STREET BAND', text: 'Guests sway along, patience lasts', secs: 22, color: '#7fe07a',
     apply(m) { m.drain *= 0.6; },
   },
   gusty_wind: {
-    name: 'GUSTY WIND', text: 'Lanterns swing, guests fret: patience drains 30% faster', secs: 18, color: '#9ad0ff',
+    name: 'GUSTY WIND', text: 'Guests fret: patience drains faster', secs: 18, color: '#9ad0ff',
     apply(m) { m.drain *= 1.3; },
   },
 };

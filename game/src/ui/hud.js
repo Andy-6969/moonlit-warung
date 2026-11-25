@@ -89,7 +89,7 @@ function drawEventCard(ctx, run, t) {
   ctx.fillStyle = ev.color; ctx.font = 'bold 10px Trebuchet MS, sans-serif'; ctx.fillText('EVENT', x + 10, y + 13);
   ctx.font = 'bold 14px Trebuchet MS, sans-serif'; ctx.fillText(ev.name, x + 52, y + 13);
   ctx.textAlign = 'right'; ctx.fillStyle = CREAM; ctx.fillText(`0:${String(Math.ceil(run.event.left)).padStart(2, '0')}`, x + w - 10, y + 13);
-  ctx.textAlign = 'left'; ctx.font = '12px Trebuchet MS, sans-serif'; ctx.fillText(ev.text, x + 10, y + 30);
+  ctx.textAlign = 'left'; ctx.font = '12px Trebuchet MS, sans-serif'; ctx.fillText(ev.text, x + 10, y + 30, w - 20);
   ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x + 10, y + 40, w - 20, 4);
   ctx.fillStyle = ev.color; ctx.fillRect(x + 10, y + 40, (w - 20) * run.event.left / run.event.secs, 4);
 }
