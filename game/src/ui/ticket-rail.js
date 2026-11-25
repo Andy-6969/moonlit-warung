@@ -73,6 +73,15 @@ export function drawTicket(ctx, tk, r, t, heldParts = []) {
   });
   ctx.fillStyle = '#e2d6bd'; ctx.fillRect(8, r.h - 14, r.w - 16, 8);
   ctx.fillStyle = m.color; ctx.fillRect(8, r.h - 14, (r.w - 16) * Math.max(0, share), 8);
+  const done = recipe.parts.filter(p => heldParts.includes(p)).length;
+  if (done) {   // how much of this dish is already on the plate in the cook's hands
+    const all = done === recipe.parts.length;
+    ctx.fillStyle = all ? '#2f9a3a' : '#c46a1a'; ctx.strokeStyle = '#fbf3e2'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect(r.w - 76, r.h - 19, 70, 16, 5); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Trebuchet MS, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(all ? 'ALL ON TRAY' : `${done}/${recipe.parts.length} ON TRAY`, r.w - 41, r.h - 10.5);
+    ctx.textAlign = 'left';
+  }
   ctx.fillStyle = '#3b2314'; ctx.font = 'bold 11px Trebuchet MS, sans-serif'; ctx.textAlign = 'right';
   ctx.fillText(`${Math.ceil(tk.patience)}s`, r.w - 8, 34);
   ctx.restore();

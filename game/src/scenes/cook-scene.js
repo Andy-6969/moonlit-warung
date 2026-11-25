@@ -109,7 +109,7 @@ export function createCookScene(app, index, opts = {}) {
     drawStations(ctx, run.k, t, target, run.mods.burnDelay);
     const planned = run.tickets.find(tk => tk.id === scene.planTicket);
     const plan = planned && !run.over ? planFor(run, planned.recipe) : [];
-    drawRoutePlan(ctx, plan, t);
+    drawRoutePlan(ctx, plan, t, run);
     drawRoute(ctx, run.chef, t);
     const p = { x: KITCHEN.x + run.chef.x * KITCHEN.tile, y: KITCHEN.y + run.chef.y * KITCHEN.tile };
     drawChef(ctx, run.chef, p.x, p.y, t, (hx, hy) => {

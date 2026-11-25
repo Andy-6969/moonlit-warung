@@ -4,6 +4,7 @@
 import { RECIPE_BY_ID } from '../food/recipes.js';
 import { CHOP, GRIND, GRILL, WOK, RAW } from '../food/ingredients.js';
 import { tileCenter } from '../core/screen.js';
+import { routeTo } from './grid.js';
 
 const back = (table, id) => Object.keys(table).find(k => table[k] === id);
 
@@ -63,7 +64,7 @@ export function drawRouteBanner(ctx, stops, slot, dish, guest, x, y, maxW) {
   if (!stops.length) return;
   ctx.save();
   ctx.font = 'bold 13px Trebuchet MS, sans-serif';
-  const head = `ROUTE ${slot}`, title = `${dish} for ${guest}`, left = `${stops.length} stop${stops.length > 1 ? 's' : ''} left`;
+  const head = `ROUTE ${slot}`, title = `${dish} for ${guest}`, left = `${stops.length} stop${stops.length > 1 ? 's' : ''} left · NEXT: ${stopName(stops[0].st)}`;
   const chain = stops.map((s, i) => `${i + 1} ${stopName(s.st)}`).join('  ›  ');
   const w = Math.min(maxW, 92 + ctx.measureText(title).width + ctx.measureText(left).width + 40);
   ctx.fillStyle = 'rgba(12,30,48,0.9)'; ctx.strokeStyle = '#7fd0ff'; ctx.lineWidth = 2;
@@ -78,13 +79,36 @@ export function drawRouteBanner(ctx, stops, slot, dish, guest, x, y, maxW) {
   ctx.restore();
 }
 
-/** Numbered badges over the planned stations, joined by a faint line. */
-export function drawRoutePlan(ctx, stops, t, color = '#7fd0ff') {
+/** The floor tiles the cook will actually walk for this plan, stop by stop (BFS around the counters). */
+export function walkFor(run, stops) {
+  let at = { c: Math.floor(run.chef.x), r: Math.floor(run.chef.y) };
+  const tiles = [at];
+  for (const s of stops) {
+    const path = routeTo(run.k, at, s.st);
+    if (!path) continue;
+    at = path[path.length - 1];
+    tiles.push(...path.slice(1), { c: at.c + (s.st.col - at.c) * 0.42, r: at.r + (s.st.row - at.r) * 0.42, stop: true });
+    tiles.push(at);
+  }
+  return tiles;
+}
+
+/** Numbered badges over the planned stations, joined by the walking path drawn as a bold lane on the floor. */
+export function drawRoutePlan(ctx, stops, t, run, color = '#7fd0ff') {
   if (!stops.length) return;
   const pts = stops.map(s => tileCenter(s.st.col, s.st.row));
   ctx.save();
-  ctx.strokeStyle = 'rgba(127,208,255,0.45)'; ctx.lineWidth = 3; ctx.setLineDash([4, 8]); ctx.lineDashOffset = -t * 25;
-  ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y - 22) : ctx.moveTo(p.x, p.y - 22))); ctx.stroke();
+  if (run) {
+    const lane = walkFor(run, stops).map(p => tileCenter(p.c, p.r));
+    const line = () => { ctx.beginPath(); lane.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y))); ctx.stroke(); };
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(12,34,54,0.55)'; ctx.lineWidth = 11; line();
+    ctx.strokeStyle = 'rgba(127,208,255,0.9)'; ctx.lineWidth = 6; line();
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = 2; ctx.setLineDash([6, 14]); ctx.lineDashOffset = -t * 30; line();
+  } else {
+    ctx.strokeStyle = 'rgba(127,208,255,0.45)'; ctx.lineWidth = 3; ctx.setLineDash([4, 8]); ctx.lineDashOffset = -t * 25;
+    ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y - 22) : ctx.moveTo(p.x, p.y - 22))); ctx.stroke();
+  }
   ctx.setLineDash([]);
   pts.forEach((p, i) => {
     const pulse = 1 + 0.08 * Math.sin(t * 5 - i * 0.6);
