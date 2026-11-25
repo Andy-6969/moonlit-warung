@@ -131,7 +131,7 @@ function drawTray(ctx, run, t) {
   const dish = recipeOfPlate(h.parts);
   const miss = dish ? null : missingParts(h.parts, run.night.menu);
   const x = 948, y = 202, w = 316, hh = 88;
-  ctx.fillStyle = 'rgba(20,10,30,0.88)'; ctx.strokeStyle = dish ? '#7fe07a' : '#c9a26a'; ctx.lineWidth = 2;
+  ctx.fillStyle = '#1a0f26'; ctx.strokeStyle = dish ? '#7fe07a' : '#c9a26a'; ctx.lineWidth = 2; // opaque: the street sign must not bleed through
   ctx.beginPath(); ctx.roundRect(x, y, w, hh, 10); ctx.fill(); ctx.stroke();
   drawPlate(ctx, h, x + 52, y + hh / 2, 92, dish ? 0.6 + 0.4 * Math.sin(t * 4) : 0);
   ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
