@@ -33,6 +33,21 @@ export function drawFloor(ctx, k, dark) {
   if (dark) { ctx.fillStyle = 'rgba(10,10,40,0.28)'; ctx.fillRect(KITCHEN.x, KITCHEN.y, w, h); }
 }
 
+/** Rain nights: the tarp leaks onto a few floor tiles; drops fall and ripple out on small puddles. */
+export function drawLeaks(ctx, k, t) {
+  const spots = [];
+  for (let r = 1; r < k.rows - 1; r++) for (let c = 1; c < k.cols - 1; c++) if (!k.tiles[r][c] && (c * 7 + r * 11) % 9 === 0) spots.push([c, r]);
+  spots.slice(0, 5).forEach(([c, r], i) => {
+    const x = KITCHEN.x + c * T + T / 2 + ((i * 13) % 17) - 8, y = KITCHEN.y + r * T + T / 2 + ((i * 7) % 13) - 6;
+    ctx.fillStyle = 'rgba(110,150,210,0.35)'; ctx.beginPath(); ctx.ellipse(x, y, 24, 10, 0, 0, Math.PI * 2); ctx.fill();
+    const u = (t * 0.9 + i * 0.37) % 1;
+    ctx.strokeStyle = `rgba(220,235,255,${0.7 * (1 - u)})`; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.ellipse(x, y, 6 + u * 18, 2 + u * 7, 0, 0, Math.PI * 2); ctx.stroke();
+    const dy = ((t * 1.6 + i * 0.29) % 1) * 60;
+    ctx.fillStyle = 'rgba(200,225,255,0.85)'; ctx.beginPath(); ctx.ellipse(x, y - 60 + dy, 2.5, 5, 0, 0, Math.PI * 2); ctx.fill();
+  });
+}
+
 function counterBlock(ctx, x, y, top = '#a8703f', face = '#7c4a24') {
   ctx.fillStyle = face; ctx.fillRect(x, y + T - 14, T, 14);
   ctx.fillStyle = top; ctx.fillRect(x, y, T, T - 12);

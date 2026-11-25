@@ -5,7 +5,7 @@ import { interact } from '../kitchen/stations.js';
 import { createRun, updateRun, secondsLeft } from '../service/night-run.js';
 import { stationAt } from '../kitchen/grid.js';
 import { W, H, KITCHEN, tileCenter } from '../core/screen.js';
-import { drawFloor, drawStations, stationLabel } from '../art/kitchen-art.js';
+import { drawFloor, drawStations, drawLeaks, stationLabel } from '../art/kitchen-art.js';
 import { drawChef } from '../art/people-art.js';
 import { drawFood, drawPlate } from '../art/food-art.js';
 import { drawStreet } from '../art/street-art.js';
@@ -97,6 +97,7 @@ export function createCookScene(app, index, opts = {}) {
     const plateParts = run.chef.held?.id === 'plate' ? run.chef.held.parts : [];
     drawTicketRail(ctx, run, t, plateParts, scene.planTicket);
     drawFloor(ctx, run.k, run.night.dark && (scene.forceDark || Math.sin(t * 7) > 0.9));
+    if (run.night.weather === 'rain') drawLeaks(ctx, run.k, t);
     const target = run.over || run.chef.route.length ? null : targetStation(run.chef, run.k);
     drawStations(ctx, run.k, t, target, run.mods.burnDelay);
     const planned = run.tickets.find(tk => tk.id === scene.planTicket);

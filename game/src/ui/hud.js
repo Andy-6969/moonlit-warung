@@ -100,11 +100,21 @@ export function heldHint(run) {
   return `${nameOf(h.id)}: ${where}`;
 }
 
+/** An empty open palm: the cook's hands are free. */
+function drawOpenHand(ctx, x, y) {
+  ctx.fillStyle = '#e8b88a'; ctx.strokeStyle = '#6b3f22'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.roundRect(x - 8, y - 4, 16, 14, 5); ctx.fill(); ctx.stroke();
+  for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.roundRect(x - 8 + i * 4.2, y - 13 + (i === 0 || i === 3 ? 2 : 0), 3.6, 11, 2); ctx.fill(); ctx.stroke(); }
+  ctx.save(); ctx.translate(x - 9, y + 1); ctx.rotate(-0.7);
+  ctx.beginPath(); ctx.roundRect(-2, -8, 4, 10, 2); ctx.fill(); ctx.stroke(); ctx.restore();
+}
+
 export function drawBottomBar(ctx, run, t) {
   ctx.fillStyle = '#1d1224'; ctx.fillRect(0, 758, 1280, 42);
   ctx.fillStyle = '#2f2238'; ctx.beginPath(); ctx.roundRect(12, 762, 50, 34, 6); ctx.fill();
   const h = run.chef.held;
   if (h) h.id === 'plate' ? drawPlate(ctx, h, 37, 779, 44) : drawFood(ctx, h.id, 37, 779, 36);
+  else drawOpenHand(ctx, 37, 781);
   ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
   ctx.fillStyle = '#ffcf5a'; ctx.font = 'bold 12px Trebuchet MS, sans-serif'; ctx.fillText('HOLDING', 72, 770);
   ctx.fillStyle = CREAM; ctx.font = 'bold 15px Trebuchet MS, sans-serif'; ctx.fillText(heldHint(run), 72, 788);
