@@ -60,6 +60,7 @@ export function resultOf(run, save) {
   return { index: run.index, night: run.night, stars: run.stars, stats: run.stats, takings: run.takings, reviews: run.reviews, walkouts: run.walkouts, purse: save.purse };
 }
 
+window.warung = app; // read by tools/playtest.py to check real mouse and keyboard play
 app.status(`Moonlit Warung: ${NIGHTS.length} nights, ${RECIPES.length} recipes, ${Object.keys(REGULARS).length} regulars, ${UPGRADES.length} stall upgrades`);
 
 const shot = new URLSearchParams(location.search).get('shot');

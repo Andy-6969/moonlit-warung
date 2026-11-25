@@ -21,7 +21,7 @@ Controls: WASD or arrows to walk, SPACE (or E) to use the station you face (tap 
 node serve.ts   # then open http://localhost:8080
 ```
 
-Hand-in: `mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts`. Tests: `node tools/simtest.mjs` cooks and serves every dish of every night through the real station code. Screenshots: `python tools/shoot.py`.
+Hand-in: `mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts`. Tests: `node tools/simtest.mjs` cooks and serves every dish of every night through the real station code; `python tools/playtest.py` plays Night 1 in headless Chromium with real mouse clicks and SPACE taps. Screenshots: `python tools/shoot.py`.
 
 ---
 
