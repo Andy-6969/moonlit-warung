@@ -43,6 +43,8 @@ export function makeFx(feel, onStatus = () => {}) {
         case 'walkout': SFX.walkout(); kick(feel, 6, '#ff2a1a'); callout(feel, 1040, SEAT_Y(d.ticket.seat) - 30, 'WALKED OUT', '#ff5a3a', 22, 1.6); break;
         case 'bin': SFX.bin(); burst(feel, at.x, at.y, 'smoke', 6); break;
         case 'closing': SFX.gong(); break;
+        case 'event': SFX.order(); kick(feel, 4, d.color); onStatus(`${d.name}: ${d.text}`); break;
+        case 'event-end': onStatus('The market settles down'); break;
         default: break;
       }
     },

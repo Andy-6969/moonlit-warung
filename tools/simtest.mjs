@@ -77,11 +77,17 @@ for (let n = 0; n < NIGHTS.length; n++) {
     run.chef.held = null;
   }
   const full = createRun(n, save, fx);
-  let spawned = 0;
-  const orig = full.fx; full.fx = { emit: (t, d) => { if (t === 'order') spawned++; } };
-  for (let i = 0; i < (night.seconds + 2) * 60; i++) updateRun(full, 1 / 60);
+  let spawned = 0, events = [];
+  const planned = full.eventQueue.length, base = JSON.stringify(full.mods);
+  full.fx = { emit: (t, d) => { if (t === 'order') spawned++; if (t === 'event') events.push(d.name); } };
+  for (let i = 0; i < (night.seconds + 2) * 60; i++) {
+    updateRun(full, 1 / 60);
+    if (full.event && JSON.stringify(full.mods) === base) fail(`${night.name}: ${full.event.id} changed nothing`);
+  }
   if (!full.over) fail(`${night.name}: never closed`);
-  console.log(`night ${n + 1} ${night.name}: ${night.menu.length} dishes cooked and served; full night ${spawned} tickets, ${full.stats.missed} walk-outs with nobody cooking`);
+  if (events.length !== planned) fail(`${night.name}: ${planned} events planned, ${events.length} ran`);
+  if (!full.event && JSON.stringify(full.mods) !== base) fail(`${night.name}: stall modifiers not restored after the events`);
+  console.log(`night ${n + 1} ${night.name}: ${night.menu.length} dishes cooked and served; full night ${spawned} tickets, ${full.stats.missed} walk-outs with nobody cooking; events: ${events.join(', ') || 'none'}`);
 }
 console.log(failures ? `${failures} failures` : 'all nights pass');
 process.exit(failures ? 1 : 0);

@@ -47,7 +47,7 @@ export function tickOrders(run, dt) {
       run.nextSpawn = run.time + gap * (0.8 + run.rng() * 0.4);
     } else run.nextSpawn = run.time + 1;
   }
-  const drain = run.rush ? run.mods.rushCalm : 1;
+  const drain = (run.rush ? run.mods.rushCalm : 1) * (run.mods.drain || 1);
   for (const t of [...run.tickets]) {
     t.enter = Math.max(0, t.enter - dt * 3);
     t.patience -= dt * drain;

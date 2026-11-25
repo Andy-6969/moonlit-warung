@@ -18,7 +18,7 @@ export const UPGRADES = [
 
 /** The kitchen's numbers with the owned upgrades applied. */
 export function stallModifiers(owned) {
-  const m = { chopTaps: 4, grindTaps: 4, walk: 1, wok: 1, grill: 1, patience: 1, comboWindow: 9, tip: 1, burnDelay: 7, rushCalm: 1, seats: 5, perfectBonus: 0 };
+  const m = { chopTaps: 4, grindTaps: 4, walk: 1, wok: 1, grill: 1, patience: 1, comboWindow: 9, tip: 1, burnDelay: 7, rushCalm: 1, seats: 5, perfectBonus: 0, drain: 1 };
   for (const u of UPGRADES) if (owned.includes(u.id)) u.apply(m);
   return m;
 }

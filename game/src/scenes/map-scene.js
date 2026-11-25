@@ -5,6 +5,7 @@ import { W, H } from '../core/screen.js';
 import { NIGHTS, newDishes } from '../nights/campaign.js';
 import { RECIPE_BY_ID } from '../food/recipes.js';
 import { DIFFICULTIES } from '../service/difficulty.js';
+import { eventsPreview } from '../service/events.js';
 import { writeSave } from '../core/save.js';
 import { drawSky, drawMoon } from '../art/street-art.js';
 import { drawDish } from '../art/food-art.js';
@@ -96,8 +97,9 @@ export function drawMap(ctx, t, save, scene, buttons) {
     for (let s = 0; s <= i; s++) star(ctx, 730 + i * 170 + s * 22, 572, 10, save.stars[save.selected] > i);
     ctx.fillStyle = '#ffcf5a'; ctx.font = 'bold 18px Trebuchet MS, sans-serif'; ctx.fillText(`${g}`, 730 + i * 170 + (i + 1) * 22, 573);
   });
+  ctx.fillStyle = '#ff9a6a'; ctx.font = 'bold 14px Trebuchet MS, sans-serif'; ctx.fillText(eventsPreview(n, save.selected), 716, 604);
   const d = DIFFICULTIES[save.difficulty ?? 1];
-  ctx.fillStyle = d.color; ctx.font = 'bold 15px Trebuchet MS, sans-serif'; ctx.fillText(`${d.name}: ${d.text}`, 716, 626);
+  ctx.fillStyle = d.color; ctx.font = 'bold 15px Trebuchet MS, sans-serif'; ctx.fillText(`${d.name}: ${d.text}`, 716, 634);
   if (buttons) {
     buttons.find(b => b.id === 'diff').label = `Difficulty: ${d.name}  (T)`;
     for (const b of buttons) button(ctx, b, scene?.hot === b, t);

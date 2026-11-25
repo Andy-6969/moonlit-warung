@@ -3,6 +3,7 @@
 import { moveChef, targetStation, planRoute, faceStation, chefTile } from '../kitchen/chef.js';
 import { interact } from '../kitchen/stations.js';
 import { createRun, updateRun, secondsLeft } from '../service/night-run.js';
+import { EVENTS } from '../service/events.js';
 import { stationAt } from '../kitchen/grid.js';
 import { W, H, KITCHEN, tileCenter } from '../core/screen.js';
 import { drawFloor, drawStations, drawLeaks, stationLabel } from '../art/kitchen-art.js';
@@ -10,7 +11,8 @@ import { drawChef } from '../art/people-art.js';
 import { drawFood, drawPlate } from '../art/food-art.js';
 import { drawStreet } from '../art/street-art.js';
 import { drawTicketRail, ticketRect } from '../ui/ticket-rail.js';
-import { planFor, drawRoutePlan } from '../kitchen/route-plan.js';
+import { planFor, drawRoutePlan, drawRouteBanner } from '../kitchen/route-plan.js';
+import { REGULARS } from '../service/customers.js';
 import { inside } from '../ui/widgets.js';
 import { drawTopBar, drawBottomBar, drawBanner } from '../ui/hud.js';
 import { makeFx } from '../feel/reactions.js';
@@ -83,6 +85,11 @@ export function createCookScene(app, index, opts = {}) {
 
     if (run.rush && !scene.wasRush) scene.banner = { text: 'RUSH HOUR!', sub: 'The street floods in: orders come twice as fast', life: 2.4, color: '#ff7a4a' };
     scene.wasRush = run.rush;
+    if (run.event && run.event !== scene.lastEvent) {
+      const ev = EVENTS[run.event.id];
+      scene.banner = { text: `${ev.name}!`, sub: ev.text, life: 2.4, color: ev.color };
+    }
+    scene.lastEvent = run.event;
     const left = Math.ceil(secondsLeft(run));
     if (left <= 20 && left !== scene.lastTick) { scene.lastTick = left; SFX.tick(); if (left === 20) scene.banner = { text: 'LAST 20 SECONDS', sub: 'Plate what you have, the gong is coming', life: 2, color: '#ff5a4a' }; }
     setMusicTempo(run.rush || left <= 20 ? 1.35 : 1);
@@ -101,7 +108,8 @@ export function createCookScene(app, index, opts = {}) {
     const target = run.over || run.chef.route.length ? null : targetStation(run.chef, run.k);
     drawStations(ctx, run.k, t, target, run.mods.burnDelay);
     const planned = run.tickets.find(tk => tk.id === scene.planTicket);
-    if (planned && !run.over) drawRoutePlan(ctx, planFor(run, planned.recipe), t);
+    const plan = planned && !run.over ? planFor(run, planned.recipe) : [];
+    drawRoutePlan(ctx, plan, t);
     drawRoute(ctx, run.chef, t);
     const p = { x: KITCHEN.x + run.chef.x * KITCHEN.tile, y: KITCHEN.y + run.chef.y * KITCHEN.tile };
     drawChef(ctx, run.chef, p.x, p.y, t, (hx, hy) => {
@@ -110,6 +118,10 @@ export function createCookScene(app, index, opts = {}) {
       if (h.id === 'plate') drawPlate(ctx, h, hx, hy, 62);
       else drawFood(ctx, h.id, hx, hy, 46);
     });
+    if (plan.length) {
+      const slot = [...run.tickets].sort((a, b) => a.born - b.born).indexOf(planned) + 1;
+      drawRouteBanner(ctx, plan, slot, RECIPE_BY_ID[planned.recipe].name, REGULARS[planned.who].name, KITCHEN.x + KITCHEN.tile + 4, KITCHEN.y + KITCHEN.tile + 4, KITCHEN.tile * 11 - 8);
+    }
     drawStreet(ctx, run, t);
     drawTray(ctx, run, t);
     if (scene.hover && !run.over) hoverTip(ctx, scene.hover);

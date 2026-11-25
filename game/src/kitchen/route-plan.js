@@ -2,7 +2,7 @@
 // dish needs in a walking order from where the cook stands: crates, board or cobek, wok or grill,
 // a plate, then the pass. Parts already on the plate you carry are skipped.
 import { RECIPE_BY_ID } from '../food/recipes.js';
-import { CHOP, GRIND, GRILL, WOK } from '../food/ingredients.js';
+import { CHOP, GRIND, GRILL, WOK, RAW } from '../food/ingredients.js';
 import { tileCenter } from '../core/screen.js';
 
 const back = (table, id) => Object.keys(table).find(k => table[k] === id);
@@ -53,6 +53,29 @@ export function planFor(run, recipeId) {
   if (!held.length) add(nearest(run, at, s => s.kind === 'plates'), 'plate');
   add(nearest(run, at, s => s.kind === 'pass'), 'serve');
   return stops;
+}
+
+const SHORT = { board: 'Board', mortar: 'Cobek', wok: 'Wok', grill: 'Grill', plates: 'Plate', pass: 'Serve' };
+const stopName = st => (st.kind === 'crate' ? RAW[st.ing].crate : SHORT[st.kind] || st.kind);
+
+/** The route as words across the top of the kitchen floor: which ticket, how many stops left, in order. */
+export function drawRouteBanner(ctx, stops, slot, dish, guest, x, y, maxW) {
+  if (!stops.length) return;
+  ctx.save();
+  ctx.font = 'bold 13px Trebuchet MS, sans-serif';
+  const head = `ROUTE ${slot}`, title = `${dish} for ${guest}`, left = `${stops.length} stop${stops.length > 1 ? 's' : ''} left`;
+  const chain = stops.map((s, i) => `${i + 1} ${stopName(s.st)}`).join('  ›  ');
+  const w = Math.min(maxW, 92 + ctx.measureText(title).width + ctx.measureText(left).width + 40);
+  ctx.fillStyle = 'rgba(12,30,48,0.9)'; ctx.strokeStyle = '#7fd0ff'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.roundRect(x, y, Math.max(w, Math.min(maxW, ctx.measureText(chain).width * 0.86 + 24)), 44, 8); ctx.fill(); ctx.stroke();
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#7fd0ff'; ctx.beginPath(); ctx.roundRect(x + 8, y + 5, 74, 18, 5); ctx.fill();
+  ctx.fillStyle = '#0c2236'; ctx.fillText(head, x + 14, y + 14);
+  ctx.fillStyle = '#fff3dc'; ctx.fillText(title, x + 92, y + 14);
+  ctx.fillStyle = '#ffcf5a'; ctx.fillText(left, x + 102 + ctx.measureText(title).width, y + 14);
+  ctx.font = '11px Trebuchet MS, sans-serif'; ctx.fillStyle = '#bfe6ff';
+  ctx.fillText(chain, x + 10, y + 33, maxW - 20);
+  ctx.restore();
 }
 
 /** Numbered badges over the planned stations, joined by a faint line. */

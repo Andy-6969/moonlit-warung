@@ -11,6 +11,7 @@ export const NIGHT_2 = {
   patience: { start: 66, end: 52 },
   goals: [220, 380, 520],
   twist: 'Rain: the grill runs 25% slower.',
+  events: [{ at: 0.55, id: 'gusty_wind' }],
   weather: 'rain',
   grillSpeed: 0.75,
   map: [

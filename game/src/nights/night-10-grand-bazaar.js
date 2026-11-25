@@ -12,6 +12,7 @@ export const NIGHT_10 = {
   patience: { start: 56, end: 40 },
   goals: [640, 920, 1200],
   twist: 'Two rushes, all sixteen dishes, the full moon.',
+  events: [{ at: 0.2, id: 'tour_bus' }, { at: 0.55, id: 'gas_surge' }],
   vip: 'ratna',
   rush: { from: 0.3, to: 0.45, factor: 0.5, again: { from: 0.75, to: 0.92 } },
   map: [

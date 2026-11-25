@@ -7,6 +7,7 @@ import { createShopScene } from './scenes/shop-scene.js';
 import { createBookScene } from './scenes/book-scene.js';
 import { createTitleScene } from './scenes/title-scene.js';
 import { spawnTicket } from './service/orders.js';
+import { startEvent } from './service/events.js';
 import { stationAt } from './kitchen/grid.js';
 import { tickFeel } from './feel/particles.js';
 import { NIGHTS } from './nights/campaign.js';
@@ -57,6 +58,9 @@ function stageService(app, plannedGuest = 'sari') {
   run.chef.goal = stationAt(run.k, 12, 4);
   run.chef.held = { id: 'plate', parts: ['grilled_prawn', 'sambal', 'lime_wedge'] };
   run.takings = 774; run.combo = 3; run.lastServe = run.time - 2.5; run.rush = true;
+  run.eventQueue = [];
+  startEvent(run, 'gas_surge');   // the second market event of the night broke 7 s ago
+  run.event.left = 13;
   run.stats.served = 14;
   const fx = run.fx;
   run.seats[5] = { who: 'lusi', state: 'eating', anim: 2, dish: 'mie_udang' };

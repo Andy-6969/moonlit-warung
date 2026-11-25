@@ -11,6 +11,7 @@ export const NIGHT_3 = {
   patience: { start: 62, end: 46 },
   goals: [320, 520, 700],
   twist: 'Festival rush at the halfway bell: orders come twice as fast.',
+  events: [{ at: 0.72, id: 'street_band' }],
   rush: { from: 0.45, to: 0.7, factor: 0.5 },
   map: [
     '#rnectaghlpX#',

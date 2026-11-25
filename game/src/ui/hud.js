@@ -7,6 +7,7 @@ import { drawFood, drawPlate } from '../art/food-art.js';
 import { nameOf, nextStationFor } from '../food/ingredients.js';
 import { recipeOfPlate, missingParts } from '../food/recipes.js';
 import { ENDLESS_STRIKES } from '../service/difficulty.js';
+import { EVENTS } from '../service/events.js';
 
 const CREAM = '#ffe9c4';
 
@@ -37,6 +38,7 @@ export function drawTopBar(ctx, run, t) {
   ctx.fillStyle = CREAM; ctx.font = '14px Trebuchet MS, sans-serif';
   ctx.fillText(`${run.night.endless ? 'Endless' : `Night ${run.night.id} of 10`} · ${run.night.name} · ${run.difficulty?.name || 'Classic'}`, 18, 46);
 
+  drawEventCard(ctx, run, t);
   if (run.night.endless) return drawEndlessClock(ctx, run, t);
   const left = secondsLeft(run), share = left / run.night.seconds;
   const late = left <= 20;
@@ -65,6 +67,31 @@ export function drawTopBar(ctx, run, t) {
   goals.forEach(gv => star(ctx, bx + bw * (gv / top), by, 11, run.takings >= gv));
   ctx.fillStyle = CREAM; ctx.font = '11px Trebuchet MS, sans-serif'; ctx.textAlign = 'left';
   ctx.fillText('star goals', bx, 14);
+}
+
+/** The market event in play: its name, what it changes and a draining bar; else the next one coming. */
+function drawEventCard(ctx, run, t) {
+  const x = 288, y = 6, w = 246, h = 48;
+  const ev = run.event && EVENTS[run.event.id];
+  const next = !ev && run.eventQueue?.[0];
+  if (!ev && !next) return;
+  ctx.fillStyle = ev ? 'rgba(40,18,30,0.95)' : 'rgba(40,28,52,0.7)';
+  ctx.strokeStyle = ev ? ev.color : 'rgba(255,233,196,0.3)'; ctx.lineWidth = ev ? 2 + Math.max(0, Math.sin(t * 6)) : 1;
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, 8); ctx.fill(); ctx.stroke();
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  if (!ev) {
+    const inSecs = Math.max(0, Math.ceil(next.at * run.night.seconds - run.time));
+    const coming = EVENTS[next.id];
+    ctx.fillStyle = 'rgba(255,233,196,0.6)'; ctx.font = 'bold 10px Trebuchet MS, sans-serif'; ctx.fillText('NEXT MARKET EVENT', x + 10, y + 15);
+    ctx.fillStyle = coming.color; ctx.font = 'bold 13px Trebuchet MS, sans-serif'; ctx.fillText(`${coming.name} in ${inSecs}s`, x + 10, y + 33);
+    return;
+  }
+  ctx.fillStyle = ev.color; ctx.font = 'bold 10px Trebuchet MS, sans-serif'; ctx.fillText('EVENT', x + 10, y + 13);
+  ctx.font = 'bold 14px Trebuchet MS, sans-serif'; ctx.fillText(ev.name, x + 52, y + 13);
+  ctx.textAlign = 'right'; ctx.fillStyle = CREAM; ctx.fillText(`0:${String(Math.ceil(run.event.left)).padStart(2, '0')}`, x + w - 10, y + 13);
+  ctx.textAlign = 'left'; ctx.font = '12px Trebuchet MS, sans-serif'; ctx.fillText(ev.text, x + 10, y + 30);
+  ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x + 10, y + 40, w - 20, 4);
+  ctx.fillStyle = ev.color; ctx.fillRect(x + 10, y + 40, (w - 20) * run.event.left / run.event.secs, 4);
 }
 
 /** Endless: a count-up clock and the three walk-out strikes instead of closing time and star goals. */
