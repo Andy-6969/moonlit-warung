@@ -1,0 +1,26 @@
+// Night 2: rain drums on the tarp. Gado-Gado joins the menu and the wet charcoal grills slower,
+// so sate has to go on early while the wok line runs.
+export const NIGHT_2 = {
+  id: 2,
+  name: 'Rain on the Tarp',
+  place: 'Gang Kenari alley',
+  seconds: 165,
+  menu: ['nasi_goreng', 'mie_goreng', 'sate_ayam', 'gado_gado'],
+  regulars: ['darto', 'sari', 'joko', 'ayu'],
+  spawn: { first: 4, start: 18, end: 11 },
+  patience: { start: 66, end: 52 },
+  goals: [220, 380, 520],
+  twist: 'Rain: the grill runs 25% slower.',
+  weather: 'rain',
+  grillSpeed: 0.75,
+  map: [
+    '#rnetca#g#DX#',
+    '#...........S',
+    'B...#.......S',
+    '#...#.PPP...S',
+    'B...#.###...S',
+    'M...........#',
+    '#...........#',
+    '#WWW###GG#D##',
+  ],
+};
