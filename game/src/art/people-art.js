@@ -91,6 +91,7 @@ export function drawChef(ctx, chef, x, y, t, holdingDraw) {
   ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x, y + 18, 22, 9, 0, 0, Math.PI * 2); ctx.fill();
   const fx = chef.dir.x, fy = chef.dir.y;
   ctx.translate(x, y + bob);
+  ctx.scale(1.3, 1.3);
   ctx.fillStyle = '#f5ecd8'; ctx.strokeStyle = INK; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.ellipse(0, 6, 20, 16, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
   ctx.fillStyle = '#2f6f6a'; ctx.beginPath(); ctx.ellipse(0, 8, 13, 11, 0, 0, Math.PI * 2); ctx.fill();

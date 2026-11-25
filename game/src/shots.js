@@ -32,7 +32,6 @@ function stageService(app) {
     ['udin', 'udang_bakar', 0.13, 1],
     ['joko', 'mie_udang', 0.36, 2],
     ['sari', 'gado_gado', 0.74, 3],
-    ['rina', 'nasi_sate', 0.48, 5],
   ];
   guests.forEach(([who, recipe, share, seat], i) => {
     const t = spawnTicket(run, { who, recipe, seat });
@@ -52,12 +51,15 @@ function stageService(app) {
   put(run, 4, 2, { item: { id: 'sambal' } });
   put(run, 8, 2, { item: { id: 'plate', parts: ['fried_rice', 'sate', 'grilled_prawn'] } });
   put(run, 10, 2, { item: { id: 'peanut_sauce' } });
-  run.chef.x = 11.5; run.chef.y = 4.5; run.chef.dir = { x: 1, y: 0 };
+  run.chef.x = 8.5; run.chef.y = 4.5; run.chef.dir = { x: 1, y: 0 }; run.chef.moving = true; run.chef.step = 0.5;
+  run.chef.route = [{ c: 9, r: 4 }, { c: 10, r: 4 }, { c: 11, r: 4 }];
+  run.chef.goal = stationAt(run.k, 12, 4);
   run.chef.held = { id: 'plate', parts: ['grilled_prawn', 'sambal', 'lime_wedge'] };
   run.takings = 774; run.combo = 3; run.lastServe = run.time - 2.5; run.rush = true;
   run.stats.served = 14;
   const fx = run.fx;
-  fx.emit('serve', { at: stationAt(run.k, 12, 3), ticket: { seat: 0, who: 'lusi' }, dish: { name: 'Mie Goreng' }, pay: 126, tip: 18, combo: 3, perfect: true, nearMiss: false, secondsLeft: 30 });
+  run.seats[5] = { who: 'lusi', state: 'eating', anim: 2, dish: 'mie_udang' };
+  fx.emit('serve', { at: stationAt(run.k, 12, 3), ticket: { seat: 5, who: 'lusi' }, dish: { name: 'Mie Udang' }, pay: 126, tip: 18, combo: 3, perfect: true, nearMiss: false, secondsLeft: 30 });
   fx.emit('chop', { at: stationAt(run.k, 0, 1), progress: 0.5 });
   fx.emit('sizzle', { at: stationAt(run.k, 1, 7) });
   fx.emit('burnt', { at: stationAt(run.k, 6, 7) });

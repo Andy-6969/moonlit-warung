@@ -86,7 +86,7 @@ export function createCookScene(app, index, opts = {}) {
     const plateParts = run.chef.held?.id === 'plate' ? run.chef.held.parts : [];
     drawTicketRail(ctx, run, t, plateParts);
     drawFloor(ctx, run.k, run.night.dark && Math.sin(t * 7) > 0.9);
-    const target = run.over ? null : targetStation(run.chef, run.k);
+    const target = run.over || run.chef.route.length ? null : targetStation(run.chef, run.k);
     drawStations(ctx, run.k, t, target, run.mods.burnDelay);
     drawRoute(ctx, run.chef, t);
     const p = { x: KITCHEN.x + run.chef.x * KITCHEN.tile, y: KITCHEN.y + run.chef.y * KITCHEN.tile };
@@ -112,11 +112,12 @@ export function createCookScene(app, index, opts = {}) {
 
 function drawRoute(ctx, chef, t) {
   if (!chef.route.length) return;
-  ctx.fillStyle = 'rgba(255,246,168,0.85)';
-  chef.route.forEach((s, i) => {
-    const c = tileCenter(s.c, s.r);
-    ctx.beginPath(); ctx.arc(c.x, c.y, 4 + Math.sin(t * 8 - i) * 1.5, 0, Math.PI * 2); ctx.fill();
-  });
+  const pts = [{ x: KITCHEN.x + chef.x * KITCHEN.tile, y: KITCHEN.y + chef.y * KITCHEN.tile }, ...chef.route.map(s => tileCenter(s.c, s.r))];
+  if (chef.goal) { const g = tileCenter(chef.goal.col, chef.goal.row); const last = pts[pts.length - 1]; pts.push({ x: (last.x + g.x) / 2, y: (last.y + g.y) / 2 }); }
+  ctx.strokeStyle = 'rgba(255,246,168,0.55)'; ctx.lineWidth = 4; ctx.setLineDash([10, 10]); ctx.lineDashOffset = -t * 40;
+  ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y))); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(255,246,168,0.95)';
+  pts.slice(1).forEach((c, i) => { ctx.beginPath(); ctx.arc(c.x, c.y, 6 + Math.sin(t * 8 - i) * 1.5, 0, Math.PI * 2); ctx.fill(); });
 }
 
 function hoverTip(ctx, st) {
