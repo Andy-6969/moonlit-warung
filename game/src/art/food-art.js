@@ -1,6 +1,6 @@
 // Hand-drawn food: every raw good, prepared part and finished plate is painted here with canvas paths,
 // gradients and a warm ink outline, so a dish reads at a glance even when the screen is shrunk.
-import { RECIPE_BY_ID } from '../food/recipes.js';
+import { RECIPE_BY_ID, recipeOfPlate } from '../food/recipes.js';
 
 const INK = '#3b2314';
 
@@ -268,13 +268,32 @@ export function drawPlate(ctx, plate, x, y, s, glow = 0) {
   ctx.restore();
   const used = {};
   const parts = [...plate.parts].sort((a, b) => ORDER.indexOf(SLOT[a]) - ORDER.indexOf(SLOT[b]));
+  const complete = !!recipeOfPlate(plate.parts);
+  if (complete) kerupuk(ctx, x + s * 0.33, y - s * 0.17, s * 0.15);
   for (const p of parts) {
     const slot = SLOT[p] || 'base';
     const i = used[slot] = (used[slot] ?? -1) + 1;
     const [dx, dy, k] = SPOTS[slot][Math.min(i, 1)];
     drawFood(ctx, p, x + dx * s, y + dy * s, s * k);
   }
+  if (complete) garnish(ctx, x, y, s);
   ctx.restore();
+}
+
+/** A prawn cracker leaning on the rim: the warung's finishing touch on every complete dish. */
+function kerupuk(ctx, x, y, r) {
+  wobble(ctx, x, y, r, 20, 0.12, 8, '#f0cf8e');
+  speckle(ctx, x, y, r * 0.7, r * 0.5, ['#e89a78', '#d9a860'], 10, 4);
+  gloss(ctx, x - r * 0.3, y - r * 0.3, r * 0.25, r * 0.1, 0.5);
+}
+
+/** Cucumber slices and fried shallots: shown only once a plate is a finished dish. */
+function garnish(ctx, x, y, s) {
+  for (const [dx, dy] of [[0.3, 0.06], [0.36, 0.16]]) {
+    ell(ctx, x + dx * s, y + dy * s, s * 0.06, s * 0.05, '#e9f5d0', '#3f7a2a', 1.4);
+    ell(ctx, x + dx * s, y + dy * s, s * 0.03, s * 0.025, '#cfe8a8', null);
+  }
+  speckle(ctx, x - s * 0.04, y - s * 0.02, s * 0.16, s * 0.1, ['#9a5a1e', '#c47a2a'], 9, 21);
 }
 
 /** A finished dish of a recipe (for tickets, the menu book and the results screen). */

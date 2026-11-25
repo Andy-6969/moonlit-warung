@@ -1,10 +1,10 @@
 // Moonlit Warung: boots the stage, runs the fixed-step loop and switches between the scenes
 // (title, market map, a night of service, closing-time results, stall upgrades, recipe book).
-import { NIGHTS } from './nights/campaign.js';
 import { RECIPES } from './food/recipes.js';
 import { REGULARS } from './service/customers.js';
 import { createCookScene } from './scenes/cook-scene.js';
 import { UPGRADES } from './stall/upgrades.js';
+import { NIGHTS } from './nights/campaign.js';
 import { W, H } from './core/screen.js';
 import { makeInput, fitCanvas } from './core/input.js';
 import { loadSave, bankNight, writeSave } from './core/save.js';

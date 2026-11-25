@@ -18,7 +18,8 @@ import { makeFeel, tickFeel, drawFeel, drawFlash } from '../feel/particles.js';
 import { SFX } from '../feel/audio.js';
 import { setMusicTempo } from '../feel/music.js';
 import { newDishes } from '../nights/campaign.js';
-import { RECIPE_BY_ID } from '../food/recipes.js';
+import { RECIPE_BY_ID, recipeOfPlate, missingParts } from '../food/recipes.js';
+import { nameOf } from '../food/ingredients.js';
 import { drawDish } from '../art/food-art.js';
 
 export function createCookScene(app, index, opts = {}) {
@@ -109,6 +110,7 @@ export function createCookScene(app, index, opts = {}) {
       else drawFood(ctx, h.id, hx, hy, 46);
     });
     drawStreet(ctx, run, t);
+    drawTray(ctx, run, t);
     if (scene.hover && !run.over) hoverTip(ctx, scene.hover);
     drawFeel(ctx, feel);
     ctx.restore();
@@ -120,6 +122,24 @@ export function createCookScene(app, index, opts = {}) {
     drawFlash(ctx, feel, W, H);
   };
   return scene;
+}
+
+/** A close-up of the plate in the cook's hands over the street, so plating reads at a glance. */
+function drawTray(ctx, run, t) {
+  const h = run.chef.held;
+  if (h?.id !== 'plate' || !h.parts.length) return;
+  const dish = recipeOfPlate(h.parts);
+  const miss = dish ? null : missingParts(h.parts, run.night.menu);
+  const x = 948, y = 202, w = 316, hh = 88;
+  ctx.fillStyle = 'rgba(20,10,30,0.88)'; ctx.strokeStyle = dish ? '#7fe07a' : '#c9a26a'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.roundRect(x, y, w, hh, 10); ctx.fill(); ctx.stroke();
+  drawPlate(ctx, h, x + 52, y + hh / 2, 92, dish ? 0.6 + 0.4 * Math.sin(t * 4) : 0);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#ffcf5a'; ctx.font = 'bold 11px Trebuchet MS, sans-serif'; ctx.fillText('ON YOUR TRAY', x + 108, y + 18);
+  ctx.fillStyle = '#fff3dc'; ctx.font = 'bold 20px Georgia, serif'; ctx.fillText(dish ? dish.name : miss?.recipe.name || 'Mystery plate', x + 108, y + 42);
+  ctx.font = 'bold 13px Trebuchet MS, sans-serif';
+  ctx.fillStyle = dish ? '#7fe07a' : '#ffb04a';
+  ctx.fillText(dish ? 'Complete: ring the bell at SERVE' : `needs ${miss ? miss.miss.map(nameOf).join(' + ') : '?'}`, x + 108, y + 66);
 }
 
 function drawRoute(ctx, chef, t) {
