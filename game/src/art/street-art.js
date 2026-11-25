@@ -62,21 +62,51 @@ function farStalls(ctx, x, y, w, t) {
   }
 }
 
+/** Paving stones in staggered rows; on a rain night the low spots hold puddles that catch the lanterns. */
+function drawPaving(ctx, x, y, w, h, t, rain) {
+  ctx.fillStyle = '#3b2a4a'; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = 'rgba(20,10,30,0.45)'; ctx.lineWidth = 2;
+  for (let row = 0, py = y; py < y + h; row++, py += 34) {
+    ctx.beginPath(); ctx.moveTo(x, py); ctx.lineTo(x + w, py); ctx.stroke();
+    for (let px = x + (row % 2 ? 26 : 0); px < x + w; px += 52) { ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py + 34); ctx.stroke(); }
+  }
+  if (!rain) return;
+  for (let i = 0; i < 5; i++) {
+    const px = x + 70 + ((i * 131) % (w - 110)), py = y + 40 + ((i * 197) % (h - 70));
+    ctx.fillStyle = 'rgba(120,150,220,0.28)'; ctx.beginPath(); ctx.ellipse(px, py, 34, 9, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = `rgba(255,200,120,${0.18 + 0.08 * Math.sin(t * 3 + i)})`; ctx.beginPath(); ctx.ellipse(px - 6, py - 1, 12, 3, 0, 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+/** A plastic warung stool seen from the front: round seat, splayed legs. Locked stools are dim with a padlock. */
+function drawStool(ctx, cx, cy, usable) {
+  const top = usable ? '#d6453a' : '#4b3a55', leg = usable ? '#a8302a' : '#3a2c44';
+  ctx.strokeStyle = leg; ctx.lineWidth = 4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(cx - 14, cy + 2); ctx.lineTo(cx - 19, cy + 24); ctx.moveTo(cx + 14, cy + 2); ctx.lineTo(cx + 19, cy + 24);
+  ctx.moveTo(cx - 5, cy + 4); ctx.lineTo(cx - 6, cy + 22); ctx.moveTo(cx + 5, cy + 4); ctx.lineTo(cx + 6, cy + 22); ctx.stroke();
+  ctx.lineCap = 'butt';
+  ctx.fillStyle = leg; ctx.beginPath(); ctx.ellipse(cx, cy + 3, 21, 7, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = top; ctx.beginPath(); ctx.ellipse(cx, cy, 21, 7, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.beginPath(); ctx.ellipse(cx - 6, cy - 2, 8, 2, 0, 0, Math.PI * 2); ctx.fill();
+  if (usable) return;
+  ctx.fillStyle = '#8a7a99'; ctx.fillRect(cx - 6, cy - 18, 12, 10);
+  ctx.strokeStyle = '#8a7a99'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy - 18, 4, Math.PI, 0); ctx.stroke();
+}
+
 /** The street side: backdrop, the bar counter, and each stool with its guest, mood and order. */
 export function drawStreet(ctx, run, t) {
   const { x, y, w, h } = STREET;
-  drawSky(ctx, x, y, w, h, t, run.night.weather === 'rain');
+  const rain = run.night.weather === 'rain';
+  drawSky(ctx, x, y, w, h, t, rain);
   drawMoon(ctx, x + w - 46, y + 40, 22);
   farStalls(ctx, x, y + 6, w, t);
-  ctx.fillStyle = '#3b2a4a'; ctx.fillRect(x, y + 80, w, h - 80);
+  drawPaving(ctx, x, y + 80, w, h - 80, t, rain);
   ctx.fillStyle = '#6b3f22'; ctx.fillRect(x, y + 80, 34, h - 80);
   ctx.strokeStyle = '#3b2314'; ctx.lineWidth = 2; ctx.strokeRect(x, y + 80, 34, h - 80);
   for (let i = 0; i < 6; i++) {
     const sy = SEAT_Y(i);
     const seat = run.seats[i];
-    const usable = i < run.mods.seats;
-    ctx.fillStyle = usable ? '#d6453a' : '#4b3a55';
-    ctx.beginPath(); ctx.ellipse(x + 70, sy + 34, 20, 7, 0, 0, Math.PI * 2); ctx.fill();
+    drawStool(ctx, x + 70, sy + 34, i < run.mods.seats);
     if (!seat) continue;
     const ticket = run.tickets.find(tk => tk.id === seat.ticket);
     let mood = 2, bob = 0, alpha = 1;
