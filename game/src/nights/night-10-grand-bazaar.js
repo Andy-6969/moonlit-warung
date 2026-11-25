@@ -1,0 +1,27 @@
+// Night 10: the Grand Bazaar under a full moon. All sixteen dishes are on, the Moonlit Feast
+// included, two rushes break over the stall and every regular comes back for one last plate.
+// A cooking island in the middle of the floor holds a third wok and two more grills.
+export const NIGHT_10 = {
+  id: 10,
+  name: 'Grand Bazaar',
+  place: 'Moon Harbour boardwalk',
+  seconds: 210,
+  menu: ['nasi_goreng', 'mie_goreng', 'sate_ayam', 'gado_gado', 'udang_bakar', 'nasi_sate', 'tahu_telor', 'mie_udang', 'nasi_campur', 'nasi_udang', 'telor_balado', 'moonlit_feast', 'mie_telor', 'nasi_lalap', 'sate_udang', 'tahu_penyet'],
+  regulars: ['darto', 'sari', 'joko', 'ayu', 'udin', 'han', 'lusi', 'rina', 'wayan', 'mei', 'agus', 'ratna'],
+  spawn: { first: 2, start: 12, end: 7 },
+  patience: { start: 56, end: 40 },
+  goals: [640, 920, 1200],
+  twist: 'Two rushes, all sixteen dishes, the full moon.',
+  vip: 'ratna',
+  rush: { from: 0.3, to: 0.45, factor: 0.5, again: { from: 0.75, to: 0.92 } },
+  map: [
+    '#rnectaghlpX#',
+    'B...........S',
+    '#.PPP...PPP.S',
+    'B.###...###.S',
+    'M...........S',
+    'M...#WGG#...S',
+    '#...........#',
+    '#WW##GG##DD##',
+  ],
+};

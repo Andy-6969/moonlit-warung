@@ -1,4 +1,4 @@
-// The nine regulars of the night market. Each has a face, a favourite dish, a temper and a few lines;
+// The twelve regulars of the night market. Each has a face, a favourite dish, a temper and a few lines;
 // their mood is read straight off how much patience their ticket has left.
 
 export const REGULARS = {
@@ -18,6 +18,12 @@ export const REGULARS = {
     lines: { order: 'Mie udang, I counted the minutes.', wait: 'That is 4 minutes 12.', angry: 'Overdrawn patience.', happy: 'Balance restored.' } },
   rina: { name: 'Kak Rina', role: 'night nurse', skin: '#c88a62', hair: '#20160f', hat: 'nurse', hatColor: '#ffffff', shirt: '#7fb6d6', fav: 'nasi_campur', temper: 1.1,
     lines: { order: 'Nasi campur, shift starts soon.', wait: 'Pagers are beeping...', angry: 'Code red, I am off.', happy: 'You saved a life. Mine.' } },
+  wayan: { name: 'Bli Wayan', role: 'gamelan drummer', skin: '#a8693f', hair: '#1a1210', hat: 'udeng', hatColor: '#e8e2d0', shirt: '#2a2a2a', fav: 'sate_udang', temper: 0.85,
+    lines: { order: 'Sate udang, in tempo please.', wait: 'I could play a whole song...', angry: 'Off-beat service!', happy: 'Perfect rhythm.' } },
+  mei: { name: 'Cik Mei', role: 'shopkeeper', skin: '#ecc3a0', hair: '#141010', hat: 'none', glasses: true, shirt: '#c2423a', fav: 'nasi_lalap', temper: 1.05,
+    lines: { order: 'Nasi lalap, sambal on the side.', wait: 'My shop is unattended.', angry: 'Closing my wallet.', happy: 'Worth every coin.' } },
+  agus: { name: 'Pak Agus', role: 'night guard', skin: '#b07650', hair: '#221a14', hat: 'cap', hatColor: '#2b3d6e', shirt: '#3a4f7a', fav: 'mie_telor', temper: 1.2,
+    lines: { order: 'Mie telor, I am on patrol.', wait: 'Patrol waits for no noodle.', angry: 'Back to my post. Hungry.', happy: 'Now I can guard anything.' } },
   ratna: { name: 'Ibu Ratna', role: 'food critic', skin: '#dcae8c', hair: '#0f0b0a', hat: 'shades', hatColor: '#111111', shirt: '#7a1f3d', fav: 'moonlit_feast', temper: 1.6, vip: true,
     lines: { order: 'Impress me.', wait: 'Tick. Tock.', angry: 'One star. Generous.', happy: 'Five stars. Write that down.' } },
 };

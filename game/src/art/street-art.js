@@ -16,8 +16,8 @@ export function drawSky(ctx, x, y, w, h, t, rain) {
     ctx.fillStyle = `rgba(255,255,230,${0.3 + 0.3 * Math.sin(t * 2 + i)})`; ctx.fillRect(sx, sy, 2, 2);
   }
   if (rain) {
-    ctx.strokeStyle = 'rgba(170,200,255,0.35)'; ctx.lineWidth = 1.5;
-    for (let i = 0; i < 60; i++) {
+    ctx.strokeStyle = 'rgba(180,210,255,0.6)'; ctx.lineWidth = 2;
+    for (let i = 0; i < 110; i++) {
       const rx = x + ((i * 61 + t * 400) % w), ry = y + ((i * 37 + t * 900) % h);
       ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx - 4, ry + 14); ctx.stroke();
     }
@@ -108,4 +108,13 @@ export function drawStreet(ctx, run, t) {
     }
   }
   ctx.fillStyle = 'rgba(255,190,90,0.10)'; ctx.fillRect(x, y, Math.min(w, W - x), h);
+  if (run.night.weather === 'rain') {
+    ctx.strokeStyle = 'rgba(180,210,255,0.55)'; ctx.lineWidth = 2;
+    for (let i = 0; i < 70; i++) {
+      const rx = x + ((i * 47 + t * 300) % w), ry = y + ((i * 83 + t * 800) % h);
+      ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx - 4, ry + 16); ctx.stroke();
+    }
+    ctx.fillStyle = '#ffe9c4'; ctx.font = 'bold 13px Trebuchet MS, sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText('RAIN: grill runs 25% slower', x + w - 8, y + h - 12);
+  }
 }

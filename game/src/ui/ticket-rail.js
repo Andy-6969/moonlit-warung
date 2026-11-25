@@ -13,12 +13,24 @@ export function ticketRect(i) {
 }
 
 /** `heldParts`: parts on the plate the chef carries, ticked on the matching tickets. */
-export function drawTicketRail(ctx, run, t, heldParts = []) {
+export function drawTicketRail(ctx, run, t, heldParts = [], planned = null) {
   ctx.fillStyle = '#2a1c2e'; ctx.fillRect(0, RAIL.y - 4, 1280, RAIL.h + 4);
   ctx.strokeStyle = '#c9a26a'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(0, RAIL.y + 6); ctx.lineTo(1280, RAIL.y + 6); ctx.stroke();
   const sorted = [...run.tickets].sort((a, b) => a.born - b.born);
-  sorted.forEach((tk, i) => drawTicket(ctx, tk, ticketRect(i), t, heldParts));
+  sorted.forEach((tk, i) => {
+    const r = ticketRect(i);
+    if (tk.id === planned) {
+      ctx.save(); ctx.shadowColor = '#7fd0ff'; ctx.shadowBlur = 18; ctx.fillStyle = '#7fd0ff';
+      ctx.beginPath(); ctx.roundRect(r.x - 4, r.y - 4, r.w + 8, r.h + 8, 9); ctx.fill(); ctx.restore();
+    }
+    drawTicket(ctx, tk, r, t, heldParts);
+    const on = tk.id === planned;
+    ctx.fillStyle = on ? '#7fd0ff' : '#5a4470'; ctx.strokeStyle = '#3b2314'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.roundRect(r.x + r.w - (on ? 64 : 24), r.y + 6, on ? 58 : 18, 17, 5); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = on ? '#0c2236' : '#fff'; ctx.font = 'bold 11px Trebuchet MS, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(on ? `ROUTE ${i + 1}` : String(i + 1), r.x + r.w - (on ? 35 : 15), r.y + 15);
+  });
   if (!sorted.length) {
     ctx.fillStyle = 'rgba(255,233,196,0.6)'; ctx.font = 'italic 18px Georgia, serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     ctx.fillText('The rail is empty... the street smells your wok and comes closer.', 30, RAIL.y + 64);

@@ -5,12 +5,13 @@ import { drawSky, drawLanterns } from '../art/street-art.js';
 import { drawDish } from '../art/food-art.js';
 import { drawFace } from '../art/people-art.js';
 import { REGULARS } from '../service/customers.js';
+import { LAST_NIGHT } from '../nights/campaign.js';
 import { star } from '../ui/hud.js';
 import { panel, button, clicked, inside } from '../ui/widgets.js';
 
 export function createResultsScene(app, result) {
   const buttons = [
-    { id: 'next', label: result.index < 6 ? 'Next night' : 'Back to the map', x: 860, y: 690, w: 230, h: 54, primary: true, key: 'SPACE' },
+    { id: 'next', label: result.index < LAST_NIGHT ? 'Next night' : 'Back to the map', x: 860, y: 690, w: 230, h: 54, primary: true, key: 'SPACE' },
     { id: 'shop', label: 'Upgrades', x: 1100, y: 690, w: 150, h: 54, size: 18 },
     { id: 'retry', label: 'Retry', x: 740, y: 690, w: 110, h: 54, size: 18 },
   ];
@@ -20,7 +21,7 @@ export function createResultsScene(app, result) {
     scene.hot = buttons.find(b => inside(input.mouse, b)) || null;
     const b = clicked(input, buttons);
     if (input.hit('Space') || input.hit('Enter') || b?.id === 'next') {
-      if (result.index < 6 && app.save.unlocked > result.index) { app.save.selected = result.index + 1; }
+      if (result.index < LAST_NIGHT && app.save.unlocked > result.index) { app.save.selected = result.index + 1; }
       app.goto('map');
     } else if (b?.id === 'shop') app.goto('shop');
     else if (b?.id === 'retry') app.startNight(result.index);
@@ -34,7 +35,7 @@ export function drawResults(ctx, t, r, scene, buttons) {
   drawLanterns(ctx, -20, W + 20, 10, t, 14);
   panel(ctx, 40, 70, 640, 700);
   ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#ffcf5a'; ctx.font = 'bold 16px Trebuchet MS, sans-serif'; ctx.fillText(`NIGHT ${r.night.id} OF 7 · CLOSING TIME`, 70, 104);
+  ctx.fillStyle = '#ffcf5a'; ctx.font = 'bold 16px Trebuchet MS, sans-serif'; ctx.fillText(r.night.endless ? 'ENDLESS NIGHT · THE STALL CLOSES' : `NIGHT ${r.night.id} OF 10 · CLOSING TIME`, 70, 104);
   ctx.fillStyle = '#fff3dc'; ctx.font = 'bold 40px Georgia, serif'; ctx.fillText(r.night.name, 70, 146);
   const shown = Math.min(r.stars, Math.floor((scene?.age ?? 9) / 0.4));
   for (let i = 0; i < 3; i++) {
@@ -60,7 +61,7 @@ export function drawResults(ctx, t, r, scene, buttons) {
   });
   ctx.textAlign = 'left'; ctx.fillStyle = '#ffcf5a'; ctx.font = 'bold 30px Georgia, serif'; ctx.fillText(`Takings: ${r.takings} coins`, 70, 640);
   ctx.fillStyle = 'rgba(255,233,196,0.8)'; ctx.font = '15px Trebuchet MS, sans-serif'; ctx.fillText(`Into the stall purse: ${r.purse} coins to spend on upgrades`, 70, 676);
-  ctx.fillText(r.stars ? (r.index < 6 ? `Night ${r.index + 2} unlocked` : 'Campaign complete: the full moon is yours') : 'Earn one star to unlock the next night', 70, 704);
+  ctx.fillText(r.stars ? (r.index < LAST_NIGHT ? `Night ${r.index + 2} unlocked` : 'Campaign complete: the full moon is yours') : 'Earn one star to unlock the next night', 70, 704);
   panel(ctx, 710, 70, 540, 600);
   ctx.fillStyle = '#ffcf5a'; ctx.font = 'bold 16px Trebuchet MS, sans-serif'; ctx.textAlign = 'left'; ctx.fillText('WHAT THE REGULARS SAID', 736, 104);
   const reviews = pickReviews(r.reviews, r.walkouts);

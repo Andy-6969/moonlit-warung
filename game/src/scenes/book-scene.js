@@ -27,7 +27,7 @@ export function routeOf(part) {
 }
 
 const STATION_WORDS = new Set(['board', 'grill', 'wok', 'cobek']);
-const card = i => ({ x: 30 + (i % 4) * 307, y: 92 + Math.floor(i / 4) * 196, w: 297, h: 186 });
+const card = i => ({ x: 30 + (i % 4) * 307, y: 84 + Math.floor(i / 4) * 178, w: 297, h: 170 });
 
 export function createBookScene(app) {
   const back = { id: 'back', label: 'Back', x: 1080, y: 24, w: 170, h: 44, primary: true, key: 'ESC', size: 18 };
@@ -43,16 +43,16 @@ export function createBookScene(app) {
 export function drawBook(ctx, t, scene, back) {
   drawSky(ctx, 0, 0, W, H, t, false);
   drawLogo(ctx, 30, 46, 30);
-  ctx.fillStyle = '#ffe9c4'; ctx.font = 'bold 22px Georgia, serif'; ctx.textAlign = 'left'; ctx.fillText('Recipe book · 12 dishes from 10 crates, 4 stations', 360, 46);
+  ctx.fillStyle = '#ffe9c4'; ctx.font = 'bold 22px Georgia, serif'; ctx.textAlign = 'left'; ctx.fillText(`Recipe book · ${RECIPES.length} dishes from 10 crates, 4 stations`, 360, 46);
   RECIPES.forEach((r, i) => {
     const c = card(i);
     panel(ctx, c.x, c.y, c.w, c.h, 'rgba(251,243,226,0.96)', '#c9a26a');
-    drawDish(ctx, r.id, c.x + 62, c.y + 66, 104);
+    drawDish(ctx, r.id, c.x + 60, c.y + 70, 100);
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     ctx.fillStyle = '#3b2314'; ctx.font = 'bold 18px Georgia, serif'; ctx.fillText(r.name, c.x + 122, c.y + 26);
     ctx.fillStyle = '#b8560f'; ctx.font = 'bold 14px Trebuchet MS, sans-serif'; ctx.fillText(`${r.price} coins`, c.x + 122, c.y + 48);
     r.parts.forEach((p, k) => {
-      const y = c.y + 76 + k * 26;
+      const y = c.y + 66 + k * 23;
       const chain = routeOf(p);
       let x = c.x + 122;
       chain.forEach((step, j) => {

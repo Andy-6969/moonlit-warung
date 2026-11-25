@@ -9,7 +9,9 @@ import { drawFloor, drawStations, stationLabel } from '../art/kitchen-art.js';
 import { drawChef } from '../art/people-art.js';
 import { drawFood, drawPlate } from '../art/food-art.js';
 import { drawStreet } from '../art/street-art.js';
-import { drawTicketRail } from '../ui/ticket-rail.js';
+import { drawTicketRail, ticketRect } from '../ui/ticket-rail.js';
+import { planFor, drawRoutePlan } from '../kitchen/route-plan.js';
+import { inside } from '../ui/widgets.js';
 import { drawTopBar, drawBottomBar, drawBanner } from '../ui/hud.js';
 import { makeFx } from '../feel/reactions.js';
 import { makeFeel, tickFeel, drawFeel, drawFlash } from '../feel/particles.js';
@@ -58,6 +60,14 @@ export function createCookScene(app, index, opts = {}) {
       if (scene.chopHold > 0.16) { scene.chopHold = 0; useStation(target); }
     }
 
+    const rail = [...run.tickets].sort((a, b) => a.born - b.born);
+    for (let i = 0; i < 6; i++) if (input.hit(`Digit${i + 1}`) && rail[i]) scene.planTicket = scene.planTicket === rail[i].id ? null : rail[i].id;
+    for (const click of input.clicks) {
+      const i = rail.findIndex((_, k) => inside(click, ticketRect(k)));
+      if (i >= 0) scene.planTicket = scene.planTicket === rail[i].id ? null : rail[i].id;
+    }
+    if (scene.planTicket && !run.tickets.some(tk => tk.id === scene.planTicket)) scene.planTicket = null;
+
     const m = input.mouse;
     const c = Math.floor((m.x - KITCHEN.x) / KITCHEN.tile), r = Math.floor((m.y - KITCHEN.y) / KITCHEN.tile);
     scene.hover = stationAt(run.k, c, r);
@@ -84,10 +94,12 @@ export function createCookScene(app, index, opts = {}) {
     if (feel.shake) ctx.translate((Math.random() - 0.5) * feel.shake, (Math.random() - 0.5) * feel.shake);
     drawTopBar(ctx, run, t);
     const plateParts = run.chef.held?.id === 'plate' ? run.chef.held.parts : [];
-    drawTicketRail(ctx, run, t, plateParts);
-    drawFloor(ctx, run.k, run.night.dark && Math.sin(t * 7) > 0.9);
+    drawTicketRail(ctx, run, t, plateParts, scene.planTicket);
+    drawFloor(ctx, run.k, run.night.dark && (scene.forceDark || Math.sin(t * 7) > 0.9));
     const target = run.over || run.chef.route.length ? null : targetStation(run.chef, run.k);
     drawStations(ctx, run.k, t, target, run.mods.burnDelay);
+    const planned = run.tickets.find(tk => tk.id === scene.planTicket);
+    if (planned && !run.over) drawRoutePlan(ctx, planFor(run, planned.recipe), t);
     drawRoute(ctx, run.chef, t);
     const p = { x: KITCHEN.x + run.chef.x * KITCHEN.tile, y: KITCHEN.y + run.chef.y * KITCHEN.tile };
     drawChef(ctx, run.chef, p.x, p.y, t, (hx, hy) => {
@@ -132,11 +144,11 @@ function hoverTip(ctx, st) {
 function drawIntro(ctx, run, index, t) {
   ctx.fillStyle = 'rgba(12,8,20,0.82)'; ctx.fillRect(0, 0, W, H);
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#ffcf5a'; ctx.font = 'bold 22px Trebuchet MS, sans-serif'; ctx.fillText(`NIGHT ${run.night.id} OF 7`, W / 2, 230);
+  ctx.fillStyle = '#ffcf5a'; ctx.font = 'bold 22px Trebuchet MS, sans-serif'; ctx.fillText(run.night.endless ? `ENDLESS · ${run.difficulty.name.toUpperCase()}` : `NIGHT ${run.night.id} OF 10 · ${run.difficulty.name.toUpperCase()}`, W / 2, 230);
   ctx.fillStyle = '#fff3dc'; ctx.font = 'bold 56px Georgia, serif'; ctx.fillText(run.night.name, W / 2, 290);
   ctx.fillStyle = '#e9cfa8'; ctx.font = 'italic 20px Georgia, serif'; ctx.fillText(run.night.place, W / 2, 336);
   ctx.fillStyle = '#ff9a6a'; ctx.font = 'bold 20px Trebuchet MS, sans-serif'; ctx.fillText(run.night.twist, W / 2, 380);
-  const fresh = newDishes(index);
+  const fresh = run.night.endless ? [] : newDishes(index);
   ctx.fillStyle = '#fff3dc'; ctx.font = '16px Trebuchet MS, sans-serif'; ctx.fillText(fresh.length ? 'New on the menu tonight' : 'Same menu, bigger crowd', W / 2, 430);
   fresh.forEach((rid, i) => {
     const x = W / 2 + (i - (fresh.length - 1) / 2) * 170;

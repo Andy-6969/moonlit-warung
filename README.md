@@ -4,11 +4,12 @@
 [![rank](https://make.fun/badge/best-cooking-game-20261125-0137/Andy-6969/moonlit-warung/rank.svg)](https://make.fun/bounty/best-cooking-game-20261125-0137/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=best-cooking-game-20261125-0137)
 [![reward](https://make.fun/badge/best-cooking-game-20261125-0137/Andy-6969/moonlit-warung/reward.svg)](https://make.fun/bounty/best-cooking-game-20261125-0137?utm_source=github&utm_medium=readme&utm_campaign=best-cooking-game-20261125-0137)
 
-**Moonlit Warung** is a night-market cooking game for keyboard and mouse. Run a street-food stall through a 7-night campaign: walk the kitchen between crates, chopping boards, a stone cobek, woks and charcoal grills, assemble 12 dishes on banana-leaf plates from shared parts, and serve 9 named regulars whose moods drain on the ticket rail. Rush hours, burn timers, combos and 12 stall upgrades. Canvas 2D, no library, no network, every picture and sound made in code.
+**Moonlit Warung** is a night-market cooking game for keyboard and mouse. Run a street-food stall through a 10-night campaign: walk the kitchen between crates, chopping boards, a stone cobek, woks and charcoal grills, assemble 16 dishes on banana-leaf plates from shared parts, and serve 12 named regulars whose moods drain on the ticket rail. Rush hours, burn timers, combos, a route planner, 12 stall upgrades, 3 difficulties and an Endless night. Canvas 2D, no library, no network, every picture and sound made in code.
 
-- **7 nights**, each with its own kitchen map, menu and twist (rain slows the grill, a mirrored stall, a food critic, a pillar that splits the kitchen, two rushes at the Grand Bazaar).
-- **12 recipes** built from 11 plate parts: one wok of fried rice or one grill of sate feeds several dishes, so the route you plan matters.
-- **9 regulars** with faces, favourite dishes, tempers and lines; moods go CHEERFUL, WAITING, RESTLESS, FUMING.
+- **10 nights**, each with its own kitchen map, menu and twist (rain slows the grill, a mirrored stall, a food critic, a pillar that splits the kitchen, the sahur shift, a football final, a rival stall, two rushes at the Grand Bazaar).
+- **16 recipes** built from 11 plate parts: one wok of fried rice or one grill of sate feeds several dishes, so the route you plan matters. Press 1-6 (or click a ticket) and the kitchen numbers the stations that ticket needs, in walking order.
+- **12 regulars** with faces, favourite dishes, tempers and lines; moods go CHEERFUL, WAITING, RESTLESS, FUMING.
+- **Endless night** (three walk-outs close the stall) and **3 difficulties**: Santai, Classic, Pedas.
 - **Feel**: every chop, pound, sizzle, plate and serve answers with sound, particles and a callout; done food glows, then smokes, then burns; the last 20 seconds tick.
 - **12 stall upgrades** bought with the night's takings; 3 star goals a night.
 

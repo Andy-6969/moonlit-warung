@@ -21,9 +21,9 @@ function put(run, c, r, fields) {
 }
 
 /** Night 7 at the second rush: six guests on the rail, every station busy, a combo running. */
-function stageService(app) {
+function stageService(app, plannedGuest = 'sari') {
   app.save.upgrades = ['knife', 'leaf', 'stools', 'bell', 'lantern', 'burner'];
-  const scene = createCookScene(app, 6, { skipIntro: true, seed: 11 });
+  const scene = createCookScene(app, 9, { skipIntro: true, seed: 11 });
   const run = scene.run;
   run.time = 164;
   const guests = [
@@ -36,6 +36,7 @@ function stageService(app) {
   guests.forEach(([who, recipe, share, seat], i) => {
     const t = spawnTicket(run, { who, recipe, seat });
     t.patience = t.max * share; t.born = i; t.enter = 0;
+    if (who === plannedGuest) scene.planTicket = t.id;
   });
   put(run, 0, 1, { item: { id: 'chicken' }, progress: 0.5, shake: 0.6 });
   put(run, 0, 4, { item: { id: 'chili' }, progress: 0.25 });
@@ -68,12 +69,67 @@ function stageService(app) {
   return { scene, t: 12.3 };
 }
 
-const SAVE_MIDWAY = { unlocked: 4, stars: [3, 3, 2, 3, 0, 0, 0], purse: 410, upgrades: ['knife', 'leaf', 'stools', 'bell'], selected: 4 };
+/** Night 2 in the rain: a smaller crowd, the cook pounding peanut sauce, a gado-gado half built. */
+function stageRain(app) {
+  app.save.upgrades = ['knife'];
+  const scene = createCookScene(app, 1, { skipIntro: true, seed: 3 });
+  const run = scene.run;
+  run.time = 70;
+  [['ayu', 'sate_ayam', 0.7, 0], ['joko', 'gado_gado', 0.3, 1], ['darto', 'nasi_goreng', 0.9, 2], ['sari', 'gado_gado', 0.55, 3]].forEach(([who, recipe, share, seat], i) => {
+    const t = spawnTicket(run, { who, recipe, seat });
+    t.patience = t.max * share; t.born = i; t.enter = 0;
+    if (who === 'joko') scene.planTicket = t.id;
+  });
+  put(run, 0, 5, { item: { id: 'peanut' }, progress: 0.75, shake: 1 });
+  put(run, 7, 7, { contents: ['diced_chicken'], result: 'sate', state: 'cooking', cook: 0.55 });
+  put(run, 1, 7, { contents: ['tofu_cubes'], result: 'fried_tofu', state: 'done', cook: 1, burn: 1 });
+  put(run, 6, 3, { item: { id: 'plate', parts: ['chopped_greens'] } });
+  put(run, 7, 3, { item: { id: 'plate', parts: ['fried_rice', 'fried_egg'] } });
+  run.chef.x = 1.5; run.chef.y = 5.5; run.chef.dir = { x: -1, y: 0 }; run.chef.busy = 0.1;
+  run.takings = 238; run.combo = 2; run.lastServe = run.time - 4;
+  run.fx.emit('grind', { at: stationAt(run.k, 0, 5) });
+  tickFeel(scene.feel, 0.1);
+  scene.feel.shake = 0; scene.feel.flash = 0;
+  return { scene, t: 7.7 };
+}
+
+/** Night 4, the mirrored stall in a power flicker: fire at the back, crates at the front, the critic-free crowd restless. */
+function stageFlicker(app) {
+  app.save.upgrades = ['knife', 'leaf', 'stools'];
+  const scene = createCookScene(app, 3, { skipIntro: true, seed: 9 });
+  const run = scene.run;
+  run.time = 120;
+  [['han', 'tahu_telor', 0.8, 0], ['udin', 'udang_bakar', 0.22, 1], ['ayu', 'nasi_sate', 0.5, 2], ['joko', 'nasi_goreng', 0.62, 3], ['sari', 'gado_gado', 0.4, 4]].forEach(([who, recipe, share, seat], i) => {
+    const t = spawnTicket(run, { who, recipe, seat });
+    t.patience = t.max * share; t.born = i; t.enter = 0;
+  });
+  put(run, 2, 0, { contents: ['tofu_cubes'], result: 'fried_tofu', state: 'cooking', cook: 0.7 });
+  put(run, 3, 0, { contents: ['egg'], result: 'fried_egg', state: 'done', cook: 1, burn: 2 });
+  put(run, 6, 0, { contents: ['peeled_prawn'], result: 'grilled_prawn', state: 'cooking', cook: 0.35 });
+  put(run, 7, 0, { contents: ['diced_chicken'], result: 'sate', state: 'done', cook: 1, burn: 6.2 });
+  put(run, 0, 2, { item: { id: 'lime' }, progress: 0.5 });
+  put(run, 5, 2, { item: { id: 'plate', parts: ['fried_tofu', 'peanut_sauce'] } });
+  put(run, 6, 2, { item: { id: 'plate', parts: ['rice', 'sambal'] } });
+  run.chef.x = 7.5; run.chef.y = 1.5; run.chef.dir = { x: 0, y: -1 };
+  run.chef.held = { id: 'plate', parts: [] };
+  run.takings = 402; run.combo = 0; run.lastServe = run.time - 20;
+  run.fx.emit('cooked', { at: stationAt(run.k, 3, 0), id: 'fried_egg' });
+  run.fx.emit('walkout', { ticket: { seat: 5, who: 'lusi' } });
+  run.seats[5] = { who: 'lusi', state: 'leaving-angry', anim: 1.2 };
+  tickFeel(scene.feel, 0.2);
+  scene.feel.shake = 0; scene.feel.flash = 0;
+  scene.forceDark = true;
+  return { scene, t: 21.1 };
+}
+
+const SAVE_MIDWAY = { unlocked: 6, stars: [3, 3, 2, 3, 3, 2, 0, 0, 0, 0], purse: 410, upgrades: ['knife', 'leaf', 'stools', 'bell'], selected: 6, difficulty: 1, bestEndless: 1340 };
 
 export function stageShot(app, name, ctx) {
   seedRandom(20261125);
   let staged;
   if (name === 'cook') staged = stageService(app);
+  else if (name === 'rain') staged = stageRain(app);
+  else if (name === 'flicker') staged = stageFlicker(app);
   else if (name === 'map') { Object.assign(app.save, SAVE_MIDWAY); staged = { scene: createMapScene(app), t: 3.1 }; }
   else if (name === 'shop') { Object.assign(app.save, SAVE_MIDWAY); staged = { scene: createShopScene(app), t: 2 }; }
   else if (name === 'book') staged = { scene: createBookScene(app), t: 2 };

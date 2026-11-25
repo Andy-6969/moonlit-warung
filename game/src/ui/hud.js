@@ -6,6 +6,7 @@ import { comboMultiplier } from '../service/scoring.js';
 import { drawFood, drawPlate } from '../art/food-art.js';
 import { nameOf, nextStationFor } from '../food/ingredients.js';
 import { recipeOfPlate, missingParts } from '../food/recipes.js';
+import { ENDLESS_STRIKES } from '../service/difficulty.js';
 
 const CREAM = '#ffe9c4';
 
@@ -34,8 +35,9 @@ export function drawTopBar(ctx, run, t) {
   ctx.fillStyle = g; ctx.fillRect(0, 0, 1280, 60);
   drawLogo(ctx, 18, 22, 24);
   ctx.fillStyle = CREAM; ctx.font = '14px Trebuchet MS, sans-serif';
-  ctx.fillText(`Night ${run.night.id} of 7 · ${run.night.name} · ${run.night.place}`, 18, 46);
+  ctx.fillText(`${run.night.endless ? 'Endless' : `Night ${run.night.id} of 10`} · ${run.night.name} · ${run.difficulty?.name || 'Classic'}`, 18, 46);
 
+  if (run.night.endless) return drawEndlessClock(ctx, run, t);
   const left = secondsLeft(run), share = left / run.night.seconds;
   const late = left <= 20;
   const cx = 640, cy = 30;
@@ -63,6 +65,23 @@ export function drawTopBar(ctx, run, t) {
   goals.forEach(gv => star(ctx, bx + bw * (gv / top), by, 11, run.takings >= gv));
   ctx.fillStyle = CREAM; ctx.font = '11px Trebuchet MS, sans-serif'; ctx.textAlign = 'left';
   ctx.fillText('star goals', bx, 14);
+}
+
+/** Endless: a count-up clock and the three walk-out strikes instead of closing time and star goals. */
+function drawEndlessClock(ctx, run, t) {
+  const m = Math.floor(run.time / 60), s = Math.floor(run.time % 60);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.font = 'bold 32px Trebuchet MS, sans-serif'; ctx.fillStyle = CREAM;
+  ctx.fillText(`${m}:${String(s).padStart(2, '0')}`, 570, 30);
+  ctx.font = 'bold 11px Trebuchet MS, sans-serif'; ctx.fillStyle = 'rgba(255,233,196,0.7)'; ctx.fillText('ENDLESS · OPEN FOR', 680, 22);
+  for (let i = 0; i < ENDLESS_STRIKES; i++) {
+    const hit = i < run.stats.missed;
+    ctx.fillStyle = hit ? '#ff4a3a' : 'rgba(255,255,255,0.15)'; ctx.beginPath(); ctx.arc(690 + i * 22, 42, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = CREAM; ctx.lineWidth = 1.5; ctx.stroke();
+  }
+  ctx.font = 'bold 22px Trebuchet MS, sans-serif'; ctx.textAlign = 'right'; ctx.fillStyle = '#ffcf5a';
+  ctx.fillText(`${run.takings}`, 1262, 22);
+  ctx.font = '12px Trebuchet MS, sans-serif'; ctx.fillStyle = CREAM; ctx.fillText('coins · walk-outs end the night', 1262, 44);
 }
 
 /** What the held item still needs, as a short instruction. */

@@ -7,7 +7,7 @@ import { createCookScene } from './scenes/cook-scene.js';
 import { UPGRADES } from './stall/upgrades.js';
 import { W, H } from './core/screen.js';
 import { makeInput, fitCanvas } from './core/input.js';
-import { loadSave, bankNight } from './core/save.js';
+import { loadSave, bankNight, writeSave } from './core/save.js';
 import { createMapScene } from './scenes/map-scene.js';
 import { createResultsScene } from './scenes/results-scene.js';
 import { createShopScene } from './scenes/shop-scene.js';
@@ -44,8 +44,13 @@ const app = {
     app.sceneName = 'cook';
     app.scene = createCookScene(app, index);
   },
+  startEndless() { app.startNight('endless'); },
   finishNight(run) {
-    bankNight(app.save, run.index, run.takings, run.stars);
+    if (run.night.endless) {
+      app.save.bestEndless = Math.max(app.save.bestEndless || 0, run.takings);
+      app.save.purse += run.takings;
+      writeSave(app.save);
+    } else bankNight(app.save, run.index, run.takings, run.stars);
     app.sceneName = 'results';
     app.scene = createResultsScene(app, resultOf(run, app.save));
   },

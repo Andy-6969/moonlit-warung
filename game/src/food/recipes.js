@@ -1,4 +1,4 @@
-// The twelve dishes of the warung. Each is a set of plate components; many share parts,
+// The sixteen dishes of the warung. Each is a set of plate components; many share parts,
 // so one wok of fried rice or one grill of sate can feed several different tickets.
 
 export const RECIPES = [
@@ -14,6 +14,10 @@ export const RECIPES = [
   { id: 'nasi_udang', name: 'Nasi Goreng Udang', parts: ['fried_rice', 'grilled_prawn', 'lime_wedge'], price: 42, blurb: 'Fried rice with prawns and bright lime.' },
   { id: 'telor_balado', name: 'Telor Balado', parts: ['rice', 'fried_egg', 'sambal'], price: 30, blurb: 'Fried egg smothered in red chili sambal.' },
   { id: 'moonlit_feast', name: 'Moonlit Feast', parts: ['fried_rice', 'sate', 'grilled_prawn', 'peanut_sauce'], price: 58, blurb: 'The house platter for a full-moon crowd.' },
+  { id: 'mie_telor', name: 'Mie Telor', parts: ['fried_noodles', 'fried_egg'], price: 27, blurb: 'Noodles under a lacy fried egg, a sahur classic.' },
+  { id: 'nasi_lalap', name: 'Nasi Lalap', parts: ['rice', 'chopped_greens', 'sambal'], price: 29, blurb: 'Rice, raw greens and a fierce sambal.' },
+  { id: 'sate_udang', name: 'Sate Udang', parts: ['grilled_prawn', 'peanut_sauce', 'lime_wedge'], price: 38, blurb: 'Prawn skewers in peanut sauce with lime.' },
+  { id: 'tahu_penyet', name: 'Tahu Penyet', parts: ['rice', 'fried_tofu', 'chopped_greens'], price: 31, blurb: 'Smashed tofu on rice with fresh greens.' },
 ];
 
 export const RECIPE_BY_ID = Object.fromEntries(RECIPES.map(r => [r.id, r]));

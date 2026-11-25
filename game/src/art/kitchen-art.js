@@ -20,7 +20,17 @@ export function drawFloor(ctx, k, dark) {
     ctx.fillStyle = 'rgba(255,230,190,0.08)';
     ctx.beginPath(); ctx.moveTo(x + T / 2, y + 10); ctx.lineTo(x + T - 10, y + T / 2); ctx.lineTo(x + T / 2, y + T - 10); ctx.lineTo(x + 10, y + T / 2); ctx.closePath(); ctx.fill();
   }
-  if (dark) { ctx.fillStyle = 'rgba(10,10,40,0.28)'; ctx.fillRect(KITCHEN.x, KITCHEN.y, k.cols * T, k.rows * T); }
+  const w = k.cols * T, h = k.rows * T;
+  for (const [u, v] of [[0.25, 0.35], [0.62, 0.3], [0.45, 0.78], [0.85, 0.72]]) {
+    const lx = KITCHEN.x + u * w, ly = KITCHEN.y + v * h;
+    const g = ctx.createRadialGradient(lx, ly, 10, lx, ly, 260);
+    g.addColorStop(0, 'rgba(255,214,140,0.22)'); g.addColorStop(1, 'rgba(255,214,140,0)');
+    ctx.fillStyle = g; ctx.fillRect(KITCHEN.x, KITCHEN.y, w, h);
+  }
+  const vg = ctx.createRadialGradient(KITCHEN.x + w / 2, KITCHEN.y + h / 2, h * 0.4, KITCHEN.x + w / 2, KITCHEN.y + h / 2, w * 0.62);
+  vg.addColorStop(0, 'rgba(20,8,30,0)'); vg.addColorStop(1, 'rgba(20,8,30,0.35)');
+  ctx.fillStyle = vg; ctx.fillRect(KITCHEN.x, KITCHEN.y, w, h);
+  if (dark) { ctx.fillStyle = 'rgba(10,10,40,0.28)'; ctx.fillRect(KITCHEN.x, KITCHEN.y, w, h); }
 }
 
 function counterBlock(ctx, x, y, top = '#a8703f', face = '#7c4a24') {

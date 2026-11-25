@@ -41,7 +41,7 @@ export function createTitleScene(app) {
     drawFace(ctx, 'darto', 200, 470, 70, 2); drawFace(ctx, 'sari', 1080, 470, 70, 2); drawFace(ctx, 'joko', 300, 480, 56, 1); drawFace(ctx, 'ayu', 980, 482, 56, 2);
     for (const b of buttons) button(ctx, b, scene.hot === b, t);
     ctx.fillStyle = '#ffcf5a'; ctx.font = 'bold 18px Trebuchet MS, sans-serif'; ctx.textAlign = 'center';
-    ctx.fillText('7 nights · 12 recipes · 9 regulars · 12 stall upgrades', W / 2, 690);
+    ctx.fillText('10 nights · 16 recipes · 12 regulars · 12 stall upgrades · 3 difficulties + Endless', W / 2, 690);
     ctx.fillStyle = 'rgba(255,233,196,0.7)'; ctx.font = '15px Trebuchet MS, sans-serif';
     ctx.fillText('Keyboard: WASD or arrows to walk, SPACE to use a station (tap to chop). Mouse: click a station and the cook walks there.', W / 2, 726);
   };

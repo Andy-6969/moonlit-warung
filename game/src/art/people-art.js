@@ -25,6 +25,11 @@ function hat(ctx, who, x, y, s) {
       ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.roundRect(x - s * 0.22, y - s * 0.45, s * 0.44, s * 0.16, 4); ctx.fill(); ctx.stroke();
       ctx.fillStyle = '#d33'; ctx.fillRect(x - 3, y - s * 0.43, 6, s * 0.12); ctx.fillRect(x - s * 0.06, y - s * 0.39, s * 0.12, 5);
       break;
+    case 'udeng':
+      ctx.beginPath(); ctx.moveTo(x - s * 0.34, y - s * 0.18); ctx.quadraticCurveTo(x, y - s * 0.5, x + s * 0.34, y - s * 0.18); ctx.lineTo(x + s * 0.3, y - s * 0.08); ctx.lineTo(x - s * 0.3, y - s * 0.08); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x, y - s * 0.42); ctx.lineTo(x + s * 0.12, y - s * 0.56); ctx.lineTo(x + s * 0.06, y - s * 0.36); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#b8a060'; for (let i = -2; i <= 2; i++) { ctx.beginPath(); ctx.arc(x + i * s * 0.1, y - s * 0.2, 2, 0, Math.PI * 2); ctx.fill(); }
+      break;
     case 'bun':
       ctx.fillStyle = who.hair; ctx.beginPath(); ctx.arc(x, y - s * 0.4, s * 0.13, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
       break;

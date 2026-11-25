@@ -22,7 +22,7 @@ export function spawnTicket(run, forced = {}) {
   const seat = forced.seat ?? freeSeat(run);
   if (seat < 0) return null;
   const night = run.night;
-  const progress = run.time / night.seconds;
+  const progress = Math.min(1, run.time / (night.ramp || night.seconds));
   const seated = run.tickets.map(t => t.who);
   const vipDue = night.vip && run.vipSpawned < 2 && progress > (run.vipSpawned ? 0.62 : 0.28);
   const who = forced.who || (vipDue ? night.vip : pickCustomer(run.rng, night, seated));
@@ -39,11 +39,11 @@ export function spawnTicket(run, forced = {}) {
 
 export function tickOrders(run, dt) {
   const night = run.night;
-  const progress = run.time / night.seconds;
-  run.rush = inRush(night, progress);
+  const progress = Math.min(1, run.time / (night.ramp || night.seconds));
+  run.rush = inRush(night, run.time / night.seconds);
   if (run.time >= run.nextSpawn && run.time < night.seconds - 6) {
     if (spawnTicket(run)) {
-      const gap = lerp(night.spawn.start, night.spawn.end, progress) * (run.rush ? night.rush.factor : 1);
+      const gap = lerp(night.spawn.start, night.spawn.end, progress) * (run.rush ? night.rush.factor : 1) * (run.spawnMul || 1);
       run.nextSpawn = run.time + gap * (0.8 + run.rng() * 0.4);
     } else run.nextSpawn = run.time + 1;
   }

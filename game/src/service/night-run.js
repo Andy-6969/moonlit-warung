@@ -7,12 +7,19 @@ import { tickStations } from '../kitchen/stations.js';
 import { tickOrders } from './orders.js';
 import { stallModifiers } from '../stall/upgrades.js';
 import { seededRandom } from '../core/screen.js';
+import { DIFFICULTIES, ENDLESS, ENDLESS_STRIKES } from './difficulty.js';
 
-export function createRun(index, save, fx, seed = 7 + index * 101) {
-  const night = NIGHTS[index];
+export function createRun(index, save, fx, seed = 7 + (index === 'endless' ? 999 : index) * 101) {
+  const night = index === 'endless' ? ENDLESS : NIGHTS[index];
   const k = buildKitchen(night.map);
   const mods = stallModifiers(save.upgrades);
+  const diff = DIFFICULTIES[save.difficulty ?? 1];
+  mods.patience *= diff.patience * (night.patienceMul || 1);
+  mods.tip *= night.tipMul || 1;
+  mods.burnDelay += diff.burn;
   return {
+    spawnMul: diff.spawn,
+    difficulty: diff,
     index, night, k, mods, fx,
     chef: makeChef(k),
     rng: seededRandom(seed),
@@ -42,7 +49,8 @@ export function updateRun(run, dt) {
   tickOrders(run, dt);
   tickStations(run, dt);
   if (run.time - run.lastServe > run.mods.comboWindow && run.combo > 0) run.combo = 0;
-  if (run.time >= run.night.seconds) {
+  const endlessDone = run.night.endless && run.stats.missed >= ENDLESS_STRIKES;
+  if (run.time >= run.night.seconds || endlessDone) {
     run.over = true;
     run.stars = starsFor(run.night, run.takings);
     run.fx.emit('closing', { stars: run.stars });
